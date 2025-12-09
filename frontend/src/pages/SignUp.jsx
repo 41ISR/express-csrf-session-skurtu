@@ -1,4 +1,6 @@
+import {useNavigate} from "react-router-dom"
 const SignUp = () => {
+  const naigate = useNavigate()
     const handleSubmit = async (e) => {
         e.preventDefault()
         const user = {
@@ -6,7 +8,7 @@ const SignUp = () => {
             password: e.target.password.value
         }
         try {
-            const res = await fetch("https://curly-space-system-g4jxpjvqvwqf9j6g-3000.app.github.dev/signup", {
+            const res = await fetch("https://curly-space-system-g4jxpjvqvwqf9j6g-3000.app.github.dev/auth/signup", {
                 method: "POST",
                 headers: {
                     "Content-Type":"application/json"
@@ -18,6 +20,7 @@ const SignUp = () => {
             if (!res.ok) throw new Error(res.statusText)
 
             console.log(res)
+            navigate("/")
         } catch (error){
             console.error(error)
         }
@@ -37,7 +40,7 @@ const SignUp = () => {
           <form onSubmit={handleSubmit} type="submit">
             <input id="email" name="email" type="text" placeholder="Имя пользователя" required />
             <input id="password" name="password" type="password" placeholder="Пароль (мин. 6 символов)" required />
-            <button>Зарегистрироваться</button>
+            <button type="submit">Зарегистрироваться</button>
           </form>
         </div>
       </div>

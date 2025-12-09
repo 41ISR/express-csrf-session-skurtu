@@ -6,7 +6,6 @@ const bcrypt = require("bcrypt")
 const session = require("express-session")
 
 const app = express()
-exports.app = app
 
 app.set("trust proxy", 1) // Только для codespace
 
@@ -38,11 +37,14 @@ app.use(session({
 app.get("/auth/me", (req, res) => {
     console.log(req.session)
     if (req.session.userId) {
-        return res.json({ loggedIn: true})
+        return res.json({ loggedIn: true, user: {
+            userId: req.session.userId,
+            email: req.session.email
+    }})
     }
 
     return res.status(401).json({logged: true})
-    
+
 })
 app.post("/auth/signup", (req, res) => {
     try {
@@ -69,16 +71,16 @@ app.post("/auth/signin", (req, res) => {
     .prepare (`SELECT * FROM users WHERE email = ?`)
     .get(email)
 
-    if (!user) return res
+    if (!user) res
     .status(401)
-    .json({error: "Неправильные данные"})
+    .json({error: "Неправильные данные1"})
 
     const validPassword = bcrypt.compareSync(password, user.password)
 
     if (!validPassword) {
         res
         .status(401)
-        .json({error:"Неправильные данные"})
+        .json({error:"Неправильные данные2"})
     }
     req.session.email = user.email
     req.session.userId = user.id

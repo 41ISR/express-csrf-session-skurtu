@@ -1,5 +1,4 @@
 const Database = require("better-sqlite3")
-const { app } = require(".")
 
 const db = new Database("database.db")
 
