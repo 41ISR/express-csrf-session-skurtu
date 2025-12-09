@@ -40,6 +40,9 @@ app.get("/auth/me", (req, res) => {
     if (req.session.userId) {
         return res.json({ loggedIn: true})
     }
+
+    return res.status(401).json({logged: true})
+    
 })
 app.post("/auth/signup", (req, res) => {
     try {
@@ -58,8 +61,28 @@ app.post("/auth/signup", (req, res) => {
 }
 )
 
+
 app.post("/auth/signin", (req, res) => {
-    
+    const {email, password} = req.body
+
+    const user = db
+    .prepare (`SELECT * FROM users WHERE email = ?`)
+    .get(email)
+
+    if (!user) return res
+    .status(401)
+    .json({error: "Неправильные данные"})
+
+    const validPassword = bcrypt.compareSync(password, user.password)
+
+    if (!validPassword) {
+        res
+        .status(401)
+        .json({error:"Неправильные данные"})
+    }
+    req.session.email = user.email
+    req.session.userId = user.id
+    res.status(200).json(user)
 }
 )
 app.listen("3000", () => {
